@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>নামাজ শিক্ষা - 3D ইন্টারঅ্যাকটিভ গাইড</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">
+                <i class="fas fa-mosque"></i>
+                <span>নামাজ শিক্ষা 3D</span>
+            </div>
+            <div class="time-display" id="currentTime">
+                <i class="far fa-clock"></i> 
+                <span id="time"></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Prayer Options Grid -->
+        <div class="prayer-grid" id="prayerGrid">
+            <!-- Fajr -->
+            <div class="prayer-card active" data-prayer="fajr" onclick="selectPrayer('fajr')">
+                <div class="prayer-icon">🌅</div>
+                <div class="prayer-name">ফজর</div>
+                <div class="prayer-time">ভোর ৪:৫৬</div>
+                <div class="rakat-info">সুন্নত (২) + ফরজ (২)</div>
+            </div>
+            
+            <!-- Dhuhr -->
+            <div class="prayer-card" data-prayer="dhuhr" onclick="selectPrayer('dhuhr')">
+                <div class="prayer-icon">☀️</div>
+                <div class="prayer-name">যোহর</div>
+                <div class="prayer-time">দুপুর ১২:০৮</div>
+                <div class="rakat-info">সুন্নত (৪) + ফরজ (৪) + সুন্নত (২) + নফল (২)</div>
+            </div>
+            
+            <!-- Asr -->
+            <div class="prayer-card" data-prayer="asr" onclick="selectPrayer('asr')">
+                <div class="prayer-icon">🌆</div>
+                <div class="prayer-name">আসর</div>
+                <div class="prayer-time">বিকাল ৪:১২</div>
+                <div class="rakat-info">সুন্নত (৪) + ফরজ (৪)</div>
+            </div>
+            
+            <!-- Maghrib -->
+            <div class="prayer-card" data-prayer="maghrib" onclick="selectPrayer('maghrib')">
+                <div class="prayer-icon">🌇</div>
+                <div class="prayer-name">মাগরিব</div>
+                <div class="prayer-time">সন্ধ্যা ৬:০২</div>
+                <div class="rakat-info">ফরজ (৩) + সুন্নত (২) + নফল (২)</div>
+            </div>
+            
+            <!-- Isha -->
+            <div class="prayer-card" data-prayer="isha" onclick="selectPrayer('isha')">
+                <div class="prayer-icon">🌙</div>
+                <div class="prayer-name">এশা</div>
+                <div class="prayer-time">রাত ৭:৩০</div>
+                <div class="rakat-info">সুন্নত (৪) + ফরজ (৪) + সুন্নত (২) + বিতর (৩)</div>
+            </div>
+        </div>
+
+        <!-- Prayer Type Selector -->
+        <div class="type-selector-container">
+            <div class="type-selector" id="typeSelector">
+                <button class="type-btn active" onclick="selectType('sunnat')">সুন্নত</button>
+                <button class="type-btn" onclick="selectType('farz')">ফরজ</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- 3D Character Section -->
+            <div class="character-section">
+                <div class="character-header">
+                    <span class="character-name" id="characterName">ফজরের সুন্নত নামাজ</span>
+                    <div class="play-controls">
+                        <button class="play-button" id="playButton" onclick="togglePlay()">
+                            <i class="fas fa-play" id="playIcon"></i>
+                            <span id="playText">শুরু করুন</span>
+                        </button>
+                        <button class="reset-button" onclick="resetPrayer()">
+                            <i class="fas fa-undo-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="character-container" id="characterContainer">
+                    <canvas id="characterCanvas"></canvas>
+                </div>
+
+                <div class="info-panel" id="infoPanel">
+                    <div class="surah-info">
+                        <div class="arabic-text" id="arabicDisplay">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+                        <div class="pronunciation-text" id="pronunciationDisplay">বিসমিল্লাহির রাহমানির রাহিম</div>
+                        <div class="meaning-text" id="meaningDisplay">শুরু করছি আল্লাহর নামে যিনি পরম করুণাময়, অতি দয়ালু</div>
+                    </div>
+                    <div class="progress-info">
+                        <span class="rakat-badge" id="rakatDisplay">রাকাত ১/২</span>
+                        <span class="step-badge" id="stepDisplay">ধাপ ১/২০</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Details Section -->
+            <div class="details-section" id="detailsSection">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="audioPlayer" style="display: none;"></audio>
+
+    <!-- JavaScript Files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
